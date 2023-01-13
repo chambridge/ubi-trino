@@ -1,8 +1,6 @@
 name: Regular base image update check
-on:
-  schedule:
-    - cron: "5 0 * * *"
-  workflow_dispatch:
+
+on: push
 
 jobs:
   build:
@@ -12,6 +10,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Install skopeo
         run: sudo apt-get install -y skopeo
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Check change
         run: |
           UBI_VERSION=8.6 skopeo inspect "docker://$(grep -Po '(?<=FROM )([^"]+)' Dockerfile)" | grep -Po '(?<="Digest": ")([^"]+)' > .baseimagedigest
